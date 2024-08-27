@@ -18,4 +18,4 @@ systemctl start user
 
 cp mongo.repo /etc/yum.repos.d/mongo.repo
 dnf install mongodb-org-shell -y
-mongo --host MONGODB-SERVER-IPADDRESS </app/schema/catalogue.js
+mongo --host mongodb-dev.devjsr1.online </app/schema/catalogue.js
