@@ -15,7 +15,7 @@ systemctl daemon-reload
 
 
 systemctl enable catalogue
-systemctl start catalogue
+systemctl restart catalogue
 
 cp mongo.repo /etc/yum.repos.d/mongo.repo
 dnf install mongodb-org-shell -y
