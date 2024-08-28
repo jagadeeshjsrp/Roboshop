@@ -10,5 +10,5 @@ if [ -z "$mysql_root_password" ]; then
 fi
 
 component="shipping"
-func_schema_setup=mysql
+schema_setup=mysql
 func_java
