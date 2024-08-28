@@ -1,5 +1,5 @@
 script=$(realpath "$0")
-scrpit_path=$(dirname "$script")
+script_path=$(dirname "$script")
 source ${script_path}/common.sh
 
 echo -e "\e[36m>>>>>>>Install Golang<<<<<<<<<<<<\e[0m"
