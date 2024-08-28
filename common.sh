@@ -23,7 +23,7 @@ func_schema_setup(){
     dnf install mysql -y
 
     func_print_head "Load Schema"
-    mysql -h mysql-dev.devjsr1.online -uroot -p${mysql_root_password} < /app/schema/shipping.sql
+    mysql -h mysql-dev.devjsr1.online -uroot -p${mysql_root_password} < /app/schema/${component}.sql
   fi
 
 }
