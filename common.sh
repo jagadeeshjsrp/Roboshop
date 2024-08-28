@@ -66,7 +66,6 @@ func_nodejs()  {
   func_app_prereq
 
   func_print_head "install nodejs dependencies"
-  cd /app
   npm install
 
   func_schema_setup
