@@ -2,10 +2,10 @@ app_user=roboshop
 script=$(realpath "$0")
 scrpit_path=$(dirname "$script")
 
-print_head() {
+func_print_head() {
   echo -e "\e[36m>>>>>>>> $1 <<<<<<<<<<<<\e[0m"
 }
-schema_setup(){
+func_schema_setup(){
   if [ "$schema_setup" == "mongo" ]; then
     print_head "copy mongodb repo"
     cp ${script_path}/mongo.repo /etc/yum.repos.d/mongo.repo
@@ -19,39 +19,78 @@ schema_setup(){
 }
 
 func_nodejs()  {
-  print_head "Configuring nodejs repos"
+  func_print_head "Configuring nodejs repos"
   dnf module disable nodejs -y
   dnf module enable nodejs:18 -y
 
-  print_head "install nodejs"
+  func_print_head "install nodejs"
   dnf install nodejs -y
 
-  print_head "Add Application user"
+  func_print_head "Add Application user"
   useradd ${app_user}
 
-  print_head "create application directory"
+  func_print_head "create application directory"
   rm -rf /app
   mkdir /app
 
-  print_head "download app content"
+  func_print_head "download app content"
   curl -L -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}.zip
   cd /app
 
-  print_head "unzip app content"
+  func_print_head "unzip app content"
   unzip /tmp/${component}.zip
 
-  print_head "install nodejs dependencies "
+  func_print_head "install nodejs dependencies "
   npm install
 
-  print_head "copy cart config "
+  func_print_head "copy cart config "
   cp ${script_path}/${component}.service /etc/systemd/system/${component}.service
 
-  print_head "start cart service "
+  func_print_head "start cart service "
   systemctl daemon-reload
   systemctl enable ${component}
   systemctl start ${component}
 
   schema_setup
+}
+
+func_java() {
+  func_print_head "Install Maven"
+  dnf install maven -y
+
+  func_print_head "Add Application USer"
+  useradd ${app_user}
+
+  func_print_head "Create Application Directory"
+  rm -rf /app
+  mkdir /app
+
+  func_print_head "Download App Content"
+  curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping.zip
+
+  func_print_head "Extract App Content"
+  cd /app
+  unzip /tmp/shipping.zip
+
+  func_print_head "Download Dependencies"
+  cd /app
+  mvn clean package
+  mv target/shipping-1.0.jar shipping.jar
+
+  func_print_head "SetUp Systemd Service"
+  cp ${script_path}/shipping.service /etc/systemd/system/shipping.service
+
+
+  func_print_head "Install Mysql"
+  dnf install mysql -y
+
+  func_print_head "Load Schema"
+  mysql -h mysql-dev.devjsr1.online -uroot -p${mysql_root_password} < /app/schema/shipping.sql
+
+  func_print_head "Start Shipping Service"
+  systemctl daemon-reload
+  systemctl enable shipping
+  systemctl restart shipping
 }
 
 
